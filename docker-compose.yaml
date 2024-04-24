@@ -1,0 +1,41 @@
+version: '3.9'  # Update version (consider using the latest stable version)
+
+services:
+
+  firefly-iii:
+    image: firefly-iii/firefly-iii:latest  # Use the official Firefly III image
+    restart: unless-stopped
+    ports:
+      - "80:80"  # Expose port 80 of the container to port 80 on the host (web interface)
+    environment:
+      - FIREFLY_DB_DRIVER=mysql
+      - FIREFLY_DB_HOST=mariadb  # Connect to mariadb service by its service name
+      - FIREFLY_DB_NAME=firefly  # Database name for Firefly III
+      - FIREFLY_DB_USER=root  # Database username (use a dedicated user in production)
+      - FIREFLY_DB_PASSWORD=root  # Database password (use a strong password in production)
+      - FIREFLY_WEB_SERVER=nginx  # Web server used by Firefly III
+      # Additional environment variables for Firefly III (optional)
+      # - FIREFLY_LOG_LEVEL=debug
+
+  mariadb:
+    image: mariadb:10.6  # Use the MariaDB image
+    restart: unless-stopped
+    volumes:
+      - ./db:/var/lib/mysql  # Optional volume to persist data (consider for production)
+    environment:
+      - MYSQL_ROOT_PASSWORD=root  # Root user password (use a strong password in production)
+      - MYSQL_DATABASE=firefly  # Database name to be created
+      - MYSQL_USER=root  # Database user for Firefly III (use a dedicated user in production)
+      - MYSQL_PASSWORD=root  # Database user password (use a strong password in production)
+
+  phpmyadmin:
+    image: phpmyadmin/phpmyadmin:latest
+    restart: unless-stopped
+    ports:
+      - "8081:80"  # Expose port 8081 of the container to port 8081 on the host
+    depends_on:
+      - mariadb  # phpMyAdmin depends on MariaDB being ready
+    environment:
+      - MYSQL_ROOT_PASSWORD: root
+      - PMA_USER: root  # phpMyAdmin user (consider a dedicated user)
+      - PMA_PASSWORD: root  # phpMyAdmin password (use a strong password)
