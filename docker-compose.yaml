@@ -16,7 +16,7 @@ services:
       - ./firefly_iii_export:/var/www/firefly-iii/storage/export
       - ./firefly_iii_upload:/var/www/firefly-iii/storage/upload
     ports:
-      - 8700:80       
+      - 8700:8700     
     depends_on:
       - firefly_iii_db
 
@@ -31,4 +31,4 @@ services:
     volumes:
       - ./mysql:/var/lib/mysql
     ports:
-      - 3307:3306  # Asegúrate de cambiar este valor al mismo puerto que especificaste arriba
+      - 3307:3307  # Asegúrate de cambiar este valor al mismo puerto que especificaste arriba
